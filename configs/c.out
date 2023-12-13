@@ -1,0 +1,15 @@
+mode: set
+entryTask/configs/config.go:10.25,16.16 5 0
+entryTask/configs/config.go:19.2,21.12 3 0
+entryTask/configs/config.go:16.16,17.59 1 0
+entryTask/configs/config.go:24.20,26.46 2 0
+entryTask/configs/config.go:26.46,29.3 2 0
+entryTask/configs/config.go:31.16,33.2 1 1
+entryTask/configs/logger.go:19.38,22.65 2 0
+entryTask/configs/logger.go:26.2,26.65 1 0
+entryTask/configs/logger.go:30.2,39.20 5 0
+entryTask/configs/logger.go:22.65,24.3 1 0
+entryTask/configs/logger.go:26.65,28.3 1 0
+entryTask/configs/logger.go:42.46,55.2 6 0
+entryTask/configs/logger.go:57.32,65.2 1 0
+entryTask/configs/logger.go:67.33,75.2 1 0

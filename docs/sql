@@ -1,0 +1,33 @@
+DROP TABLE IF EXISTS `room_tab`;
+CREATE TABLE `room_tab`  (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `room_name` varchar(255) NOT NULL DEFAULT '' COMMENT 'room_name',
+  `password` varchar(255) NOT NULL DEFAULT '' COMMENT 'password,encryption',
+  `rule_json` text(800) COMMENT 'rule_json',
+  `room_owner` varchar(64) NOT NULL DEFAULT '' COMMENT 'room_owner',
+  `room_user1` varchar(64) NOT NULL DEFAULT '' COMMENT 'room_user',
+  `room_user2` varchar(64) NOT NULL DEFAULT '' COMMENT 'room_user',
+  `room_user3` varchar(64) NOT NULL DEFAULT '' COMMENT 'room_user',
+  `create_time` bigint UNSIGNED NOT NULL DEFAULT 0 COMMENT 'create time',
+  `update_time` bigint UNSIGNED NOT NULL DEFAULT 0 COMMENT 'update time',
+  `is_delete` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '0:valid,1:logically deleted',
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `idx_room_name`(`room_name`) USING BTREE,
+  INDEX `idx_is_delete`(`is_delete`) USING BTREE
+) COMMENT = 'room base info';
+
+DROP TABLE IF EXISTS `game_result_tab`;
+CREATE TABLE `game_result_tab`  (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `room_id` bigint UNSIGNED NOT NULL DEFAULT 0 COMMENT 'room_id',
+  `number` bigint UNSIGNED NOT NULL DEFAULT 0 COMMENT 'number',
+  `room_user` varchar(64) NOT NULL DEFAULT '' COMMENT 'room_user',
+  `result_json` text(800) COMMENT 'result_json',
+  `amount` bigint NOT NULL DEFAULT 0  COMMENT 'amount',
+  `status` tinyint(2) NOT NULL DEFAULT 0  COMMENT '0 draft,1confirm',
+  `create_time` bigint UNSIGNED NOT NULL DEFAULT 0 COMMENT 'create time',
+  `update_time` bigint UNSIGNED NOT NULL DEFAULT 0 COMMENT 'update time',
+  `is_delete` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '0:valid,1:logically deleted',
+  PRIMARY KEY (`id`),
+  INDEX `idx_room_id_number`(`room_id`,`number`) USING BTREE
+) COMMENT = 'game_result_tab';

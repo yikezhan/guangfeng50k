@@ -1,0 +1,28 @@
+appName: entryTask
+
+db:
+  name: entry_task_db
+  host: 127.0.0.1:3306
+  username: root
+  password: 220706Aa!
+  charset: utf8mb4
+redis:
+  host:127.0.0.1:6379
+
+log:
+  info:
+    filename: "entry_task_info.log"
+    # 最大存储大小
+    max_size: 200
+    # 最大存储时间
+    max_age: 30
+    # 备份数量
+    max_backups: 7
+  error:
+    filename: "entry_task_warn.log"
+    # 最大存储大小
+    max_size: 200
+    # 最大存储时间
+    max_age: 30
+    # 备份数量
+    max_backups: 7
