@@ -32,8 +32,8 @@ func InitMysqlPool() *gorm.DB {
 // New init
 func New() (dao *Dao) {
 	dao = &Dao{
-		db:  InitMysqlPool(),
-		rdb: InitRedis(),
+		db: InitMysqlPool(),
+		//rdb: InitRedis(),
 	}
 	return
 }
