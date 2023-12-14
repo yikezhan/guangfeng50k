@@ -1,8 +1,6 @@
 package service
 
-import (
-	"entryTask/internal/dao"
-)
+import "guangfeng/internal/dao"
 
 type Service struct {
 	dao *dao.Dao

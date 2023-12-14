@@ -1,8 +1,8 @@
 package router
 
 import (
-	"entryTask/internal/controller"
 	"github.com/gin-gonic/gin"
+	"guangfeng/internal/controller"
 	"net/http"
 )
 

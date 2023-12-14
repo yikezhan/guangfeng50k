@@ -2,12 +2,12 @@ package main
 
 //
 import (
-	"entryTask/configs"
-	"entryTask/internal/controller"
-	router "entryTask/route"
 	"flag"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+	"guangfeng/configs"
+	"guangfeng/internal/controller"
+	router "guangfeng/route"
 	"log"
 	"net/http"
 	_ "net/http/pprof"

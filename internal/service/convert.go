@@ -2,8 +2,8 @@ package service
 
 import (
 	"encoding/json"
-	"entryTask/internal/model"
-	"entryTask/internal/pojo/query"
+	"guangfeng/internal/model"
+	"guangfeng/internal/pojo/query"
 )
 
 func convertGameResultTabToUserGameResult(data []model.GameResultTab) []query.UserGameResult {

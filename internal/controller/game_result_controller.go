@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"entryTask/internal/common"
-	"entryTask/internal/pojo/query"
 	"github.com/gin-gonic/gin"
+	"guangfeng/internal/common"
+	"guangfeng/internal/pojo/query"
 	"net/http"
 )
 

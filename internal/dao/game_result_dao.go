@@ -1,8 +1,8 @@
 package dao
 
 import (
-	"entryTask/internal/common"
-	"entryTask/internal/model"
+	"guangfeng/internal/common"
+	"guangfeng/internal/model"
 	"time"
 )
 

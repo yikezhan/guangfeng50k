@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"entryTask/internal/common"
-	"entryTask/internal/service"
 	"github.com/gin-gonic/gin"
+	"guangfeng/internal/common"
+	"guangfeng/internal/service"
 	"net/http"
 )
 
