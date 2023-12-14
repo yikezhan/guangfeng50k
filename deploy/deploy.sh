@@ -1,7 +1,7 @@
 echo "拉取代码开始"
 git push origin master
 echo "打包主程序"
-go build -o main main.go
+go build -o main ../cmd/main.go
 echo "杀死原有程序"
 kill -9 "$(pgrep -f main)"
 echo "主程序权限"
