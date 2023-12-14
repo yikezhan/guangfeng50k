@@ -1,7 +1,7 @@
 appName: entryTask
 
 db:
-  name: entry_task_db
+  name: guangfeng50k
   host: 127.0.0.1:3306
   username: root
   password: 220706Aa!

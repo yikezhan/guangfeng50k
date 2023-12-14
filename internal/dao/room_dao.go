@@ -6,6 +6,7 @@ import (
 )
 
 func (d *Dao) CreateRoom(info *model.RoomTab) bool {
+	info.CreateTime = time.Now().Unix()
 	tx := d.db.Table(info.TableName()).Create(&info)
 	return tx != nil && tx.RowsAffected == 1
 }

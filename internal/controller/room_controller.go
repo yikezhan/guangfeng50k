@@ -13,30 +13,50 @@ func CreateRoom(c *gin.Context) {
 		FailResponse(c, http.StatusBadRequest, "fail", gin.H{"error": err.Error()})
 		return
 	}
-	res := srv.InsertOrUpdateRoom(room)
-	OKResponse(c, res)
+	if ok := srv.InsertOrUpdateRoom(room); !ok {
+		FailResponseRCode(c, common.RoomExistError)
+		return
+	}
+	if ok := srv.InitGameData(room.RoomName, 1); !ok {
+		FailResponseRCode(c, common.RoomInitError)
+		return
+	}
+	OKResponse(c, true)
 }
+
 func UpdateRoom(c *gin.Context) {
 	var room query.RoomReq
 	if err := c.ShouldBindJSON(&room); err != nil {
 		FailResponse(c, http.StatusBadRequest, "fail", gin.H{"error": err.Error()})
 		return
 	}
-	res := srv.InsertOrUpdateRoom(room)
-	OKResponse(c, res)
+	if ok := srv.InsertOrUpdateRoom(room); !ok {
+		FailResponseRCode(c, common.RoomExistError)
+		return
+	}
+	OKResponse(c, true)
 }
 func EnterRoom(c *gin.Context) {
-	var enterRoom query.EnterRoomReq
-	if err := c.ShouldBindJSON(&enterRoom); err != nil {
+	var req query.EnterRoomReq
+	if err := c.ShouldBindJSON(&req); err != nil {
 		FailResponse(c, http.StatusBadRequest, "fail", gin.H{"error": err.Error()})
 		return
 	}
-	res := srv.QueryRoom(enterRoom.RoomName)
-	if res.RoomOwner == enterRoom.RoomUser ||
-		res.RoomUser1 == enterRoom.RoomUser ||
-		res.RoomUser2 == enterRoom.RoomUser ||
-		res.RoomUser3 == enterRoom.RoomUser {
-		OKResponse(c, res)
+	room := srv.QueryRoom(req.RoomName)
+	if room.RoomOwner == req.RoomUser ||
+		room.RoomUser1 == req.RoomUser ||
+		room.RoomUser2 == req.RoomUser ||
+		room.RoomUser3 == req.RoomUser {
+		res, code := srv.LatestGameResult(room.ID, req.RoomUser)
+		if code != nil {
+			FailResponseRCode(c, code)
+			return
+		}
+		OKResponse(c, &query.EnterRoomResponse{
+			ID:       res.ID,
+			RoomId:   res.RoomID,
+			RoomUser: res.RoomUser,
+		})
 		return
 	}
 	FailResponseRCode(c, common.RoomUserError)

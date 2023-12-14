@@ -2,10 +2,11 @@ package service
 
 import (
 	"encoding/json"
+	"entryTask/internal/common"
 	"entryTask/internal/model"
 	"entryTask/internal/pojo/query"
-	"entryTask/internal/util"
 	"strconv"
+	"time"
 )
 
 func (s *Service) QueryRoom(roomName string) *model.RoomTab {
@@ -14,17 +15,18 @@ func (s *Service) QueryRoom(roomName string) *model.RoomTab {
 func (s *Service) InsertOrUpdateRoom(req query.RoomReq) bool {
 	rules, _ := json.Marshal(req.RoomRules)
 	room := &model.RoomTab{
-		ID:        req.RoomId,
-		RoomName:  req.RoomName,
-		Password:  req.Password,
-		RuleJSON:  string(rules),
-		RoomOwner: "房主",
-		RoomUser1: defaultName(req.RoomUser1, 1),
-		RoomUser2: defaultName(req.RoomUser1, 2),
-		RoomUser3: defaultName(req.RoomUser1, 3),
+		ID:         req.RoomId,
+		RoomName:   req.RoomName,
+		Password:   req.Password,
+		RuleJSON:   string(rules),
+		RoomOwner:  "房主",
+		RoomUser1:  defaultName(req.RoomUser1, 1),
+		RoomUser2:  defaultName(req.RoomUser2, 2),
+		RoomUser3:  defaultName(req.RoomUser3, 3),
+		UpdateTime: time.Now().Unix(),
+		IsDelete:   common.Valid,
 	}
 	if room.ID == 0 {
-		util.ReflectBuildDefaultTimeAndValid(&room)
 		return s.dao.CreateRoom(room)
 	} else {
 		return s.dao.UpdateRoom(room)

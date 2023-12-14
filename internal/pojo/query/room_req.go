@@ -1,7 +1,7 @@
 package query
 
 type RoomReq struct {
-	RoomId    int64    `form:"room_id" json:"room_id" xml:"room_id"  binding:"required"`
+	RoomId    int64    `form:"room_id" json:"room_id" xml:"room_id"`
 	RoomName  string   `form:"room_name" json:"room_name" xml:"room_name"  binding:"required"`
 	Password  string   `form:"password" json:"password" xml:"password"`
 	RoomRules RoomRule `form:"room_rules" json:"room_rules" xml:"room_rules"  binding:"required"`
@@ -22,5 +22,10 @@ type RoomRule struct {
 }
 type EnterRoomReq struct {
 	RoomName string `form:"room_name" json:"room_name" xml:"room_name"  binding:"required"`
+	RoomUser string `form:"room_user" json:"room_user" xml:"room_user"  binding:"required"`
+}
+type EnterRoomResponse struct {
+	ID       int64  `form:"id" json:"id" xml:"id"  binding:"required"`
+	RoomId   int64  `form:"room_id" json:"room_id" xml:"room_id"  binding:"required"`
 	RoomUser string `form:"room_user" json:"room_user" xml:"room_user"  binding:"required"`
 }

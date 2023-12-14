@@ -18,12 +18,10 @@ type Dao struct {
 
 func InitMysqlPool() *gorm.DB {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=%s", viper.GetString("db.username"), viper.GetString("db.password"), viper.GetString("db.host"), viper.GetString("db.name"), viper.GetString("db.charset"))
-	//db, err := orm.Open("mysql", dsn)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}
-	//initSharding(db)
 	sqlDB, err := db.DB()
 	sqlDB.SetMaxOpenConns(4000)
 	sqlDB.SetConnMaxIdleTime(10)

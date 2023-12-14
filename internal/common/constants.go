@@ -10,6 +10,12 @@ const (
 	PlayerNumber = 4
 )
 const (
-	Yes = 1
-	No  = 2
+	No   = 0
+	Win  = 1
+	Fail = 2
+)
+const (
+	Draft   = 0 //初始化状态
+	Cal     = 1 //结算中
+	Confirm = 2 //已确认
 )

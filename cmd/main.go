@@ -18,6 +18,11 @@ func main() {
 		log.Println(http.ListenAndServe(":6060", nil))
 	}()
 	flag.Parse()
+
+	//1、初始化配置文件
+	if err := configs.InitConfig(); err != nil {
+		panic(err)
+	}
 	//2、初始化日志配置
 	configs.InitLog(zap.InfoLevel)
 	defer configs.Log.Sync()
