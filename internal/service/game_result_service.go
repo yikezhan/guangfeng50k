@@ -8,13 +8,20 @@ import (
 	"time"
 )
 
-func (s *Service) QueryUserProfile(roomID int64, roomUser string) int64 {
-	gameResults := s.dao.AllGameResult(roomID, roomUser)
-	var amount int64
+func (s *Service) QueryUserProfile(roomID int64, roomUser string) (int64, []*query.UserProfile) {
+	gameResults := s.dao.AllGameResult(roomID)
+	userProfiles := make([]*query.UserProfile, 0)
+	userMap := make(map[string]int64, 0)
 	for _, v := range gameResults {
-		amount = amount + v.Amount
+		userMap[v.RoomUser] = userMap[v.RoomUser] + v.Amount
 	}
-	return amount
+	for k, v := range userMap {
+		userProfiles = append(userProfiles, &query.UserProfile{
+			RoomUser: k,
+			Amount:   v,
+		})
+	}
+	return userMap[roomUser], userProfiles
 }
 func (s *Service) QueryGameResult(roomID int64, number int64) []query.UserGameResult {
 	res := s.dao.QueryGameResult(roomID, number)
@@ -78,7 +85,7 @@ func (s *Service) SubmitGameData(req query.SubmitGameResultReq) bool {
 	return s.dao.UpdateGameResult(gameResult)
 }
 func (s *Service) ConfirmGameResult(req query.ConfirmGameResultReq) bool {
-	return s.dao.UpdateStatus(req.ResultID)
+	return s.dao.ConfirmResult(req.ResultID, req.Amount)
 }
 func (s *Service) CalGameResult(req query.CalGameResultReq) (bool, *common.RCode) {
 	res := s.dao.QueryGameResult(req.RoomID, req.Number)

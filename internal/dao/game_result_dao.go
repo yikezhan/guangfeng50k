@@ -6,14 +6,13 @@ import (
 	"time"
 )
 
-func (d *Dao) AllGameResult(roomID int64, roomUser string) []*model.GameResultTab {
+func (d *Dao) AllGameResult(roomID int64) []*model.GameResultTab {
 	query := &model.GameResultTab{
-		RoomID:   roomID,
-		RoomUser: roomUser,
+		RoomID: roomID,
 	}
 	var res []*model.GameResultTab
-	d.db.Table(query.TableName()).Where("room_id = ?", query.RoomID, "room_user = ?", query.RoomUser).
-		Order("id desc").Limit(500).Scan(&res)
+	d.db.Table(query.TableName()).Where("room_id = ?", query.RoomID).
+		Order("id desc").Limit(40000).Scan(&res)
 	return res
 }
 func (d *Dao) LatestGameResult(roomID int64, roomUser string) []*model.GameResultTab {
@@ -59,12 +58,17 @@ func (d *Dao) UpdateAmount(ID int64, amount int64) bool {
 	tx := d.db.Table(info.TableName()).Where("id", info.ID).Select("amount", "update_time").Updates(info)
 	return tx != nil && tx.RowsAffected == 1
 }
-func (d *Dao) UpdateStatus(resultID int64) bool {
+func (d *Dao) ConfirmResult(resultID int64, amount int64) bool {
 	info := &model.GameResultTab{
 		ID:         resultID,
 		Status:     common.Confirm,
+		Amount:     amount,
 		UpdateTime: time.Now().Unix(),
 	}
-	tx := d.db.Table(info.TableName()).Where("id", info.ID).Select("status", "update_time").Updates(info)
+	updateColumn := []string{"status", "update_time"}
+	if amount != 0 {
+		updateColumn = append(updateColumn, "amount")
+	}
+	tx := d.db.Table(info.TableName()).Where("id", info.ID).Select(updateColumn).Updates(info)
 	return tx != nil && tx.RowsAffected == 1
 }

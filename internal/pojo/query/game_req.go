@@ -20,6 +20,7 @@ type GameResult struct {
 }
 type ConfirmGameResultReq struct {
 	ResultID int64 `form:"result_id" json:"result_id" xml:"result_id"`
+	Amount   int64 `form:"amount" json:"amount" xml:"amount"`
 }
 type CalGameResultReq struct {
 	RoomID   int64  `form:"room_id" json:"room_id" xml:"room_id"  binding:"required"`

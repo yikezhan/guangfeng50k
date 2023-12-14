@@ -16,6 +16,12 @@ func UserProfile(c *gin.Context) {
 		FailResponse(c, http.StatusBadRequest, "fail", gin.H{"error": err.Error()})
 		return
 	}
-	amount := srv.QueryUserProfile(req.RoomId, req.RoomUser)
-	OKResponse(c, amount)
+	amount, userProfiles := srv.QueryUserProfile(req.RoomId, req.RoomUser)
+	OKResponse(c, query.UserProfileResponse{
+		Amount:       amount,
+		UserProfiles: userProfiles,
+	})
+}
+func GameDetail(c *gin.Context) {
+	OKResponse(c, "敬请期待！")
 }
