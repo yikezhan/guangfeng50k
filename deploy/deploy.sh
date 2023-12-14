@@ -1,5 +1,5 @@
 echo "拉取代码开始"
-git push origin master
+git pull origin main
 echo "打包主程序"
 go build -o main ../cmd/main.go
 echo "杀死原有程序"
