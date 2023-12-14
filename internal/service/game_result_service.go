@@ -94,48 +94,59 @@ func (s *Service) CalGameResult(req query.CalGameResultReq) (bool, *common.RCode
 		return false, common.SystemError
 	}
 	amountMap := make(map[int64]int64)
-	var kingPunishAmountTotal int64
 	for _, v := range res {
-		result := &query.GameResult{}
-		if err := json.Unmarshal([]byte(v.ResultJSON), result); err != nil {
-			return false, common.SystemError
+		amountMap[v.ID] = 0
+	}
+	for _, v := range res {
+		if ok, code := CalAmount(roomRule, v, amountMap); !ok {
+			return false, code
 		}
-		var kingPunishAmount int64
-		amountMap[v.ID], kingPunishAmount = CalAmount(roomRule, result)
-		kingPunishAmountTotal = kingPunishAmountTotal + kingPunishAmount
+	}
+	for id, amount := range amountMap {
+		s.dao.UpdateAmount(id, amount)
 	}
 	return true, nil
 }
 
-func CalAmount(rule *query.RoomRule, result *query.GameResult) (int64, int64) {
-	var amount int64
-	amount = result.FiveBoom*rule.FiveBoom*3 +
+func CalAmount(rule *query.RoomRule, v model.GameResultTab, amountMap map[int64]int64) (bool, *common.RCode) {
+
+	result := &query.GameResult{}
+	if err := json.Unmarshal([]byte(v.ResultJSON), result); err != nil {
+		return false, common.SystemError
+	}
+	boomAmount := result.FiveBoom*rule.FiveBoom +
 		result.SixBoom*rule.SixBoom +
 		result.SevenBoom*rule.SevenBoom +
 		result.EightBoom*rule.EightBoom +
 		result.NineBoom*rule.NineBoom
+	// 先全罚，再拿回自己的部分
+	kingPunishAmount := result.KingPunishment * rule.KingScore
+	for id, _ := range amountMap {
+		if id == v.ID {
+			amountMap[id] = amountMap[id] + boomAmount*(common.PlayerNumber-1) - kingPunishAmount*(common.PlayerNumber-1)
+		} else {
+			amountMap[id] = amountMap[id] - boomAmount + kingPunishAmount
+		}
+	}
 	if result.WinScore == common.Win {
-		amount = amount + rule.WinScore
+		amountMap[v.ID] = amountMap[v.ID] + rule.WinScore
 	}
 	if result.WinScore == common.Fail {
-		amount = amount - rule.WinScore
+		amountMap[v.ID] = amountMap[v.ID] - rule.WinScore
 	}
 	if result.FullScore == common.Win {
-		amount = amount + rule.FullScore
+		amountMap[v.ID] = amountMap[v.ID] + rule.FullScore
 	}
 	if result.FullScore == common.Fail {
-		amount = amount - rule.FullScore
+		amountMap[v.ID] = amountMap[v.ID] - rule.FullScore
 	}
 	if result.SurroundScore == common.Win {
-		amount = amount + rule.SurroundScore
+		amountMap[v.ID] = amountMap[v.ID] + rule.SurroundScore
 	}
 	if result.SurroundScore == common.Fail {
-		amount = amount - rule.SurroundScore
+		amountMap[v.ID] = amountMap[v.ID] - rule.SurroundScore
 	}
-	// 先全罚，再拿回自己的部分
-	kingPunishAmount := result.KingPunishment * result.KingPunishment * common.PlayerNumber
-	amount = amount - kingPunishAmount
-	return amount, kingPunishAmount
+	return true, nil
 }
 
 func validResult(res []model.GameResultTab) (bool, *common.RCode) {
