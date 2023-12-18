@@ -28,4 +28,5 @@ type EnterRoomResponse struct {
 	ID       int64  `form:"id" json:"id" xml:"id"  binding:"required"`
 	RoomId   int64  `form:"room_id" json:"room_id" xml:"room_id"  binding:"required"`
 	RoomUser string `form:"room_user" json:"room_user" xml:"room_user"  binding:"required"`
+	Number   int64  `form:"number" json:"number" xml:"number"  binding:"required"`
 }

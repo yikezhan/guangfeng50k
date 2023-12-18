@@ -56,6 +56,7 @@ func EnterRoom(c *gin.Context) {
 			ID:       res.ID,
 			RoomId:   res.RoomID,
 			RoomUser: res.RoomUser,
+			Number:   res.Number,
 		})
 		return
 	}
