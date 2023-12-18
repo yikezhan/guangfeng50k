@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"guangfeng/internal/common"
 	"guangfeng/internal/pojo/query"
 	"net/http"
 )
@@ -24,4 +25,17 @@ func UserProfile(c *gin.Context) {
 }
 func GameDetail(c *gin.Context) {
 	OKResponse(c, "敬请期待！")
+}
+
+func ModifyName(c *gin.Context) {
+	var req query.UpdateUserNameReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		FailResponse(c, http.StatusBadRequest, "fail", gin.H{"error": err.Error()})
+		return
+	}
+	if srv.ModifyName(req.RoomId, req.RoomUserOld, req.RoomUserNew) {
+		OKResponse(c, true)
+		return
+	}
+	FailResponseRCode(c, common.SystemError)
 }

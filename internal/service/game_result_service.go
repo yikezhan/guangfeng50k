@@ -8,6 +8,34 @@ import (
 	"time"
 )
 
+func (s *Service) ModifyName(roomID int64, roomUserOld string, roomUserNew string) bool {
+	room := s.dao.QueryRoomById(roomID)
+	ok := false
+	if room.RoomOwner == roomUserOld {
+		room.RoomOwner = roomUserNew
+		s.dao.UpdateRoom(room)
+		ok = true
+	}
+	if room.RoomUser1 == roomUserOld {
+		room.RoomUser1 = roomUserNew
+		s.dao.UpdateRoom(room)
+		ok = true
+	}
+	if room.RoomUser2 == roomUserOld {
+		room.RoomUser2 = roomUserNew
+		s.dao.UpdateRoom(room)
+		ok = true
+	}
+	if room.RoomUser3 == roomUserOld {
+		room.RoomUser3 = roomUserNew
+		s.dao.UpdateRoom(room)
+		ok = true
+	}
+	if ok {
+		s.dao.UpdateUserName(roomID, roomUserOld, roomUserNew)
+	}
+	return true
+}
 func (s *Service) QueryUserProfile(roomID int64, roomUser string) (int64, []*query.UserProfile) {
 	gameResults := s.dao.AllGameResult(roomID)
 	userProfiles := make([]*query.UserProfile, 0)

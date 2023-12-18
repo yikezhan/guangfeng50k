@@ -49,6 +49,16 @@ func (d *Dao) UpdateGameResult(info *model.GameResultTab) bool {
 	tx := d.db.Table(info.TableName()).Where("id", info.ID).Updates(info)
 	return tx != nil && tx.RowsAffected == 1
 }
+func (d *Dao) UpdateUserName(roomID int64, roomUserOld string, roomUserNew string) bool {
+	info := &model.GameResultTab{
+		RoomID:   roomID,
+		RoomUser: roomUserNew,
+	}
+	tx := d.db.Table(info.TableName()).
+		Where("room_id = ? and room_user = ?", info.RoomID, roomUserOld).
+		Select("room_user").Updates(info)
+	return tx != nil && tx.RowsAffected == 1
+}
 func (d *Dao) UpdateAmount(ID int64, amount int64) bool {
 	info := &model.GameResultTab{
 		ID:         ID,

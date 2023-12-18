@@ -5,9 +5,9 @@ type RoomReq struct {
 	RoomName  string   `form:"room_name" json:"room_name" xml:"room_name"  binding:"required"`
 	Password  string   `form:"password" json:"password" xml:"password"`
 	RoomRules RoomRule `form:"room_rules" json:"room_rules" xml:"room_rules"  binding:"required"`
-	RoomUser1 string   `form:"room_user1" json:"room_user1" xml:"room_user1"  binding:"required"`
-	RoomUser2 string   `form:"room_user2" json:"room_user2" xml:"room_user2"  binding:"required"`
-	RoomUser3 string   `form:"room_user3" json:"room_user3" xml:"room_user3"  binding:"required"`
+	RoomUser1 string   `form:"room_user1" json:"room_user1" xml:"room_user1" `
+	RoomUser2 string   `form:"room_user2" json:"room_user2" xml:"room_user2" `
+	RoomUser3 string   `form:"room_user3" json:"room_user3" xml:"room_user3" `
 }
 type RoomRule struct {
 	FiveBoom      int64 `form:"five_boom" json:"five_boom" xml:"five_boom"  binding:"required"`

@@ -27,8 +27,9 @@ func Load(r *gin.Engine) *gin.Engine {
 	}
 	v3 := r.Group("/user")
 	{
-		v3.POST("/profile", controller.UserProfile) //当前游戏输赢情况概览
-		v3.POST("/detail", controller.GameDetail)   //游戏总体详情
+		v3.POST("/profile", controller.UserProfile)    //当前游戏输赢情况概览
+		v3.POST("/detail", controller.GameDetail)      //游戏总体详情
+		v3.POST("/modify_name", controller.ModifyName) //游戏总体详情
 	}
 	return r
 }

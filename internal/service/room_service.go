@@ -20,9 +20,9 @@ func (s *Service) InsertOrUpdateRoom(req query.RoomReq) bool {
 		Password:   req.Password,
 		RuleJSON:   string(rules),
 		RoomOwner:  "房主",
-		RoomUser1:  defaultName(req.RoomUser1, 1),
-		RoomUser2:  defaultName(req.RoomUser2, 2),
-		RoomUser3:  defaultName(req.RoomUser3, 3),
+		RoomUser1:  defaultName(req.RoomUser1, 4),
+		RoomUser2:  defaultName(req.RoomUser2, 5),
+		RoomUser3:  defaultName(req.RoomUser3, 6),
 		UpdateTime: time.Now().Unix(),
 		IsDelete:   common.Valid,
 	}
@@ -46,6 +46,6 @@ func defaultName(name string, num int) string {
 	case 3:
 		return "美好明天"
 	default:
-		return "皮卡丘" + strconv.Itoa(1) + "号"
+		return "皮卡丘" + strconv.Itoa(num) + "号"
 	}
 }
