@@ -1,13 +1,10 @@
 package query
 
-type RoomReq struct {
+type CreateRoomReq struct {
 	RoomId    int64    `form:"room_id" json:"room_id" xml:"room_id"`
 	RoomName  string   `form:"room_name" json:"room_name" xml:"room_name"  binding:"required"`
-	Password  string   `form:"password" json:"password" xml:"password"`
 	RoomRules RoomRule `form:"room_rules" json:"room_rules" xml:"room_rules"  binding:"required"`
-	RoomUser1 string   `form:"room_user1" json:"room_user1" xml:"room_user1" `
-	RoomUser2 string   `form:"room_user2" json:"room_user2" xml:"room_user2" `
-	RoomUser3 string   `form:"room_user3" json:"room_user3" xml:"room_user3" `
+	OwnerWxId string   `form:"owner_wx_id" json:"owner_wx_id" xml:"owner_wx_id"  binding:"required"`
 }
 type RoomRule struct {
 	FiveBoom      int64 `form:"five_boom" json:"five_boom" xml:"five_boom"  binding:"required"`
@@ -20,9 +17,21 @@ type RoomRule struct {
 	SurroundScore int64 `form:"surround_score" json:"surround_score" xml:"surround_score"  binding:"required"`
 	KingScore     int64 `form:"king_score" json:"king_score" xml:"king_score"  binding:"required"`
 }
+type RoomQueryReq struct {
+	RoomId int64 `form:"room_id" json:"room_id" xml:"room_id"`
+}
+type RoomQueryResponse struct {
+	RoomId    int64    `form:"room_id" json:"room_id" xml:"room_id"`
+	RoomName  string   `form:"room_name" json:"room_name" xml:"room_name"  binding:"required"`
+	RoomRules RoomRule `form:"room_rules" json:"room_rules" xml:"room_rules"  binding:"required"`
+	OwnerWxId string   `form:"owner_wx_id" json:"owner_wx_id" xml:"owner_wx_id"  binding:"required"`
+	Number    int64    `form:"number" json:"number" xml:"number"  binding:"required"`
+}
 type EnterRoomReq struct {
 	RoomName string `form:"room_name" json:"room_name" xml:"room_name"  binding:"required"`
-	RoomUser string `form:"room_user" json:"room_user" xml:"room_user"  binding:"required"`
+	WxID     string `form:"wx_id" json:"wx_id" xml:"wx_id"  binding:"required"`
+	WxName   string `form:"wx_name" json:"wx_name" xml:"wx_name"  binding:"required"`
+	WxImage  string `form:"wx_image" json:"wx_image" xml:"wx_image"  binding:"required"`
 }
 type EnterRoomResponse struct {
 	ID       int64  `form:"id" json:"id" xml:"id"  binding:"required"`

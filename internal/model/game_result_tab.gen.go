@@ -11,7 +11,7 @@ type GameResultTab struct {
 	ID         int64  `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
 	RoomID     int64  `gorm:"column:room_id;not null;comment:room_id" json:"room_id"`                         // room_id
 	Number     int64  `gorm:"column:number;not null;comment:number" json:"number"`                            // number
-	RoomUser   string `gorm:"column:room_user;not null;comment:room_user" json:"room_user"`                   // room_user
+	RoomUserID int64  `gorm:"column:room_user_id;not null;comment:room_user_id" json:"room_user_id"`          // room_user_id
 	ResultJSON string `gorm:"column:result_json;comment:result_json" json:"result_json"`                      // result_json
 	Amount     int64  `gorm:"column:amount;not null;comment:amount" json:"amount"`                            // amount
 	Status     int32  `gorm:"column:status;not null;comment:0 draft,1confirm" json:"status"`                  // 0 draft,1confirm

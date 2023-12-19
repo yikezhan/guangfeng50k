@@ -4,7 +4,7 @@ type SubmitGameResultReq struct {
 	ResultID   int64      `form:"result_id" json:"result_id" xml:"result_id"`
 	RoomID     int64      `form:"room_id" json:"room_id" xml:"room_id"  binding:"required"`
 	Number     int64      `form:"number" json:"number" xml:"number"  binding:"required"`
-	RoomUser   string     `form:"room_user" json:"room_user" xml:"room_user"  binding:"required"`
+	WxId       string     `form:"wx_id" json:"wx_id" xml:"wx_id"  binding:"required"`
 	GameResult GameResult `form:"game_result" json:"game_result" xml:"game_result"`
 }
 type GameResult struct {
@@ -29,9 +29,9 @@ type CalGameResultReq struct {
 }
 
 type NextGameReq struct {
-	RoomID   int64  `form:"room_id" json:"room_id" xml:"room_id"  binding:"required"`
-	RoomUser string `form:"room_user" json:"room_user" xml:"room_user"  binding:"required"`
-	Number   int64  `form:"number" json:"number" xml:"number"  binding:"required"`
+	RoomID int64  `form:"room_id" json:"room_id" xml:"room_id"  binding:"required"`
+	WxId   string `form:"wx_id" json:"wx_id" xml:"wx_id"  binding:"required"`
+	Number int64  `form:"number" json:"number" xml:"number"  binding:"required"`
 }
 type NextGameResponse struct {
 	Number int64 `form:"number" json:"number" xml:"number"  binding:"required"`
@@ -46,7 +46,7 @@ type UserGameResult struct {
 	ResultID   int64      `form:"result_id" json:"result_id" xml:"result_id"`
 	RoomID     int64      `form:"room_id" json:"room_id" xml:"room_id"  binding:"required"`
 	Number     int64      `form:"number" json:"number" xml:"number"  binding:"required"`
-	RoomUser   string     `form:"room_user" json:"room_user" xml:"room_user"  binding:"required"`
+	RoomUserID string     `form:"room_user_id" json:"room_user_id" xml:"room_user_id"  binding:"required"`
 	GameResult GameResult `form:"game_result" json:"game_result" xml:"game_result"  binding:"required"`
 	Amount     int64      `form:"amount" json:"amount" xml:"amount"`
 }

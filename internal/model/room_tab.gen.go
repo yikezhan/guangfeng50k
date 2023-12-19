@@ -10,12 +10,9 @@ const TableNameRoomTab = "room_tab"
 type RoomTab struct {
 	ID         int64  `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
 	RoomName   string `gorm:"column:room_name;not null;comment:room_name" json:"room_name"`                   // room_name
-	Password   string `gorm:"column:password;not null;comment:password,encryption" json:"password"`           // password,encryption
 	RuleJSON   string `gorm:"column:rule_json;comment:rule_json" json:"rule_json"`                            // rule_json
-	RoomOwner  string `gorm:"column:room_owner;not null;comment:room_owner" json:"room_owner"`                // room_owner
-	RoomUser1  string `gorm:"column:room_user1;not null;comment:room_user" json:"room_user1"`                 // room_user
-	RoomUser2  string `gorm:"column:room_user2;not null;comment:room_user" json:"room_user2"`                 // room_user
-	RoomUser3  string `gorm:"column:room_user3;not null;comment:room_user" json:"room_user3"`                 // room_user
+	Number     int64  `gorm:"column:number;not null;comment:number" json:"number"`                            // number
+	OwnerWxID  string `gorm:"column:owner_wx_id;not null;comment:owner_wx_id" json:"owner_wx_id"`             // owner_wx_id
 	CreateTime int64  `gorm:"column:create_time;not null;comment:create time" json:"create_time"`             // create time
 	UpdateTime int64  `gorm:"column:update_time;not null;comment:update time" json:"update_time"`             // update time
 	IsDelete   int32  `gorm:"column:is_delete;not null;comment:0:valid,1:logically deleted" json:"is_delete"` // 0:valid,1:logically deleted

@@ -16,7 +16,7 @@ func convertGameResultTabToUserGameResult(data []model.GameResultTab) []query.Us
 			ResultID:   v.ID,
 			RoomID:     v.RoomID,
 			Number:     v.Number,
-			RoomUser:   v.RoomUser,
+			RoomUserID: v.RoomUserID,
 			GameResult: gameResult,
 			Amount:     v.Amount,
 		}

@@ -16,5 +16,6 @@ func Test_GenCode(t *testing.T) {
 	g.UseDB(db)
 	g.GenerateModelAs("room_tab", "RoomTab")
 	g.GenerateModelAs("game_result_tab", "GameResultTab")
+	g.GenerateModelAs("room_user_tab", "RoomUserTab")
 	g.Execute()
 }

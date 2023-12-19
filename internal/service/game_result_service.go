@@ -8,40 +8,12 @@ import (
 	"time"
 )
 
-func (s *Service) ModifyName(roomID int64, roomUserOld string, roomUserNew string) bool {
-	room := s.dao.QueryRoomById(roomID)
-	ok := false
-	if room.RoomOwner == roomUserOld {
-		room.RoomOwner = roomUserNew
-		s.dao.UpdateRoom(room)
-		ok = true
-	}
-	if room.RoomUser1 == roomUserOld {
-		room.RoomUser1 = roomUserNew
-		s.dao.UpdateRoom(room)
-		ok = true
-	}
-	if room.RoomUser2 == roomUserOld {
-		room.RoomUser2 = roomUserNew
-		s.dao.UpdateRoom(room)
-		ok = true
-	}
-	if room.RoomUser3 == roomUserOld {
-		room.RoomUser3 = roomUserNew
-		s.dao.UpdateRoom(room)
-		ok = true
-	}
-	if ok {
-		s.dao.UpdateUserName(roomID, roomUserOld, roomUserNew)
-	}
-	return true
-}
 func (s *Service) QueryUserProfile(roomID int64, roomUser string) (int64, []*query.UserProfile) {
 	gameResults := s.dao.AllGameResult(roomID)
 	userProfiles := make([]*query.UserProfile, 0)
 	userMap := make(map[string]int64, 0)
 	for _, v := range gameResults {
-		userMap[v.RoomUser] = userMap[v.RoomUser] + v.Amount
+		userMap[v.RoomUserID] = userMap[v.RoomUserID] + v.Amount
 	}
 	for k, v := range userMap {
 		userProfiles = append(userProfiles, &query.UserProfile{
@@ -51,9 +23,13 @@ func (s *Service) QueryUserProfile(roomID int64, roomUser string) (int64, []*que
 	}
 	return userMap[roomUser], userProfiles
 }
-func (s *Service) QueryGameResult(roomID int64, number int64) []query.UserGameResult {
+func (s *Service) QueryGameResult(roomID int64, number int64) ([]query.UserGameResult, *common.RCode) {
+
 	res := s.dao.QueryGameResult(roomID, number)
-	return convertGameResultTabToUserGameResult(res)
+	if ok, code := validResult(res); !ok {
+		return nil, code
+	}
+	return convertGameResultTabToUserGameResult(res), nil
 }
 
 func (s *Service) LatestGameResult(roomId int64, roomUser string) (*model.GameResultTab, *common.RCode) {
@@ -63,44 +39,19 @@ func (s *Service) LatestGameResult(roomId int64, roomUser string) (*model.GameRe
 	}
 	return res[0], nil
 }
-func (s *Service) NextGame(roomId int64, roomUser string) (int64, *common.RCode) {
+func (s *Service) NextGame(roomId int64, wxId string) (int64, *common.RCode) {
 	room := s.dao.QueryRoomById(roomId)
-	latestGame := s.dao.LatestGameResult(roomId, roomUser)[0]
-	if room.RoomOwner == roomUser {
+	latestGame := s.dao.LatestGameResult(roomId, wxId)[0]
+	if room.OwnerWxID == wxId {
 		latestGameResult := s.dao.QueryGameResult(roomId, latestGame.Number)
 		for _, v := range latestGameResult {
 			if v.Status != common.Confirm {
 				return latestGame.Number, common.GameConfirmError
 			}
 		}
-		s.InitGameData(room.RoomName, latestGame.Number+1)
 		return latestGame.Number + 1, nil
 	}
 	return latestGame.Number, nil
-}
-func (s *Service) InitGameData(roomName string, number int64) bool {
-	roomInfo := s.QueryRoom(roomName)
-	t1 := s.dao.CreateGameResult(&model.GameResultTab{
-		RoomID:   roomInfo.ID,
-		Number:   number,
-		RoomUser: roomInfo.RoomOwner,
-	})
-	t2 := s.dao.CreateGameResult(&model.GameResultTab{
-		RoomID:   roomInfo.ID,
-		Number:   number,
-		RoomUser: roomInfo.RoomUser1,
-	})
-	t3 := s.dao.CreateGameResult(&model.GameResultTab{
-		RoomID:   roomInfo.ID,
-		Number:   number,
-		RoomUser: roomInfo.RoomUser2,
-	})
-	t4 := s.dao.CreateGameResult(&model.GameResultTab{
-		RoomID:   roomInfo.ID,
-		Number:   number,
-		RoomUser: roomInfo.RoomUser3,
-	})
-	return t1 && t2 && t3 && t4
 }
 func (s *Service) SubmitGameData(req query.SubmitGameResultReq) bool {
 	resultJson, _ := json.Marshal(req.GameResult)
@@ -110,17 +61,34 @@ func (s *Service) SubmitGameData(req query.SubmitGameResultReq) bool {
 		UpdateTime: time.Now().Unix(),
 		Status:     common.Cal,
 	}
-	return s.dao.UpdateGameResult(gameResult)
+	result := s.dao.QueryGameResult(req.RoomID, req.Number)
+	for _, v := range result {
+		if v.RoomUserID == req.WxId {
+			gameResult.ID = v.ID
+			break
+		}
+	}
+	if gameResult.ID == 0 {
+		if !s.dao.UpdateGameResult(gameResult) {
+			return false
+		}
+	} else {
+		if !s.dao.CreateGameResult(gameResult) {
+			return false
+		}
+	}
+	result = s.dao.QueryGameResult(req.RoomID, req.Number)
+	if len(result) == 4 {
+		s.CalGameResult(req.RoomID, req.Number)
+	}
+	return true
 }
 func (s *Service) ConfirmGameResult(req query.ConfirmGameResultReq) bool {
 	return s.dao.ConfirmResult(req.ResultID, req.Amount)
 }
-func (s *Service) CalGameResult(req query.CalGameResultReq) (bool, *common.RCode) {
-	res := s.dao.QueryGameResult(req.RoomID, req.Number)
-	if ok, code := validResult(res); !ok {
-		return false, code
-	}
-	room := s.dao.QueryRoomById(req.RoomID)
+func (s *Service) CalGameResult(roomID int64, number int64) (bool, *common.RCode) {
+	res := s.dao.QueryGameResult(roomID, number)
+	room := s.dao.QueryRoomById(roomID)
 	if room == nil {
 		return false, common.SystemError
 	}

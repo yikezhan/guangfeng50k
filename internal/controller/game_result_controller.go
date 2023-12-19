@@ -13,7 +13,7 @@ func NextGame(c *gin.Context) {
 		FailResponse(c, http.StatusBadRequest, "fail", gin.H{"error": err.Error()})
 		return
 	}
-	number, code := srv.NextGame(req.RoomID, req.RoomUser)
+	number, code := srv.NextGame(req.RoomID, req.WxId)
 	if code != nil {
 		FailResponseRCode(c, code)
 		return
@@ -48,28 +48,20 @@ func ConfirmGameResult(c *gin.Context) {
 	OKResponse(c, true)
 }
 
-func Calculate(c *gin.Context) {
-	var calReq query.CalGameResultReq
-	if err := c.ShouldBindJSON(&calReq); err != nil {
-		FailResponse(c, http.StatusBadRequest, "fail", gin.H{"error": err.Error()})
-		return
-	}
-	ok, code := srv.CalGameResult(calReq)
-	if !ok {
-		FailResponseRCode(c, code)
-		return
-	}
-	OKResponse(c, true)
-}
 func GetGameResult(c *gin.Context) {
 	var req query.GetGameResultReq
 	if err := c.ShouldBindJSON(&req); err != nil {
 		FailResponse(c, http.StatusBadRequest, "fail", gin.H{"error": err.Error()})
 		return
 	}
-	gameResultList := srv.QueryGameResult(req.RoomID, req.Number)
+
+	gameResults, code := srv.QueryGameResult(req.RoomID, req.Number)
+	if code != nil {
+		FailResponseRCode(c, code)
+		return
+	}
 	resp := &query.GetGameResultResponse{
-		GameResultList: gameResultList,
+		GameResultList: gameResults,
 	}
 	OKResponse(c, resp)
 }

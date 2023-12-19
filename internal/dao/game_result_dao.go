@@ -15,13 +15,13 @@ func (d *Dao) AllGameResult(roomID int64) []*model.GameResultTab {
 		Order("id desc").Limit(40000).Scan(&res)
 	return res
 }
-func (d *Dao) LatestGameResult(roomID int64, roomUser string) []*model.GameResultTab {
+func (d *Dao) LatestGameResult(roomID int64, wxID string) []*model.GameResultTab {
 	query := &model.GameResultTab{
-		RoomID:   roomID,
-		RoomUser: roomUser,
+		RoomID:     roomID,
+		RoomUserID: wxID,
 	}
 	var res []*model.GameResultTab
-	d.db.Table(query.TableName()).Where("room_id = ? and room_user = ?", query.RoomID, query.RoomUser).
+	d.db.Table(query.TableName()).Where("room_id = ? and wx_id = ?", query.RoomID, query.RoomUserID).
 		Order("id desc").Limit(1).Scan(&res)
 	return res
 }
@@ -47,16 +47,6 @@ func (d *Dao) CreateGameResult(info *model.GameResultTab) bool {
 func (d *Dao) UpdateGameResult(info *model.GameResultTab) bool {
 	info.UpdateTime = time.Now().Unix()
 	tx := d.db.Table(info.TableName()).Where("id", info.ID).Updates(info)
-	return tx != nil && tx.RowsAffected == 1
-}
-func (d *Dao) UpdateUserName(roomID int64, roomUserOld string, roomUserNew string) bool {
-	info := &model.GameResultTab{
-		RoomID:   roomID,
-		RoomUser: roomUserNew,
-	}
-	tx := d.db.Table(info.TableName()).
-		Where("room_id = ? and room_user = ?", info.RoomID, roomUserOld).
-		Select("room_user").Updates(info)
 	return tx != nil && tx.RowsAffected == 1
 }
 func (d *Dao) UpdateAmount(ID int64, amount int64) bool {

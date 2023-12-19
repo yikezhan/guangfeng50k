@@ -1,14 +1,37 @@
 package controller
 
 import (
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"guangfeng/internal/common"
 	"guangfeng/internal/pojo/query"
 	"net/http"
 )
 
+func QueryRoom(c *gin.Context) {
+	var room query.CreateRoomReq
+	if err := c.ShouldBindJSON(&room); err != nil {
+		FailResponse(c, http.StatusBadRequest, "fail", gin.H{"error": err.Error()})
+		return
+	}
+	roomInfo := srv.QueryRoomById(room.RoomId)
+	if roomInfo == nil {
+		FailResponseRCode(c, common.RoomUserError)
+		return
+	}
+	var roomRules query.RoomRule
+	json.Unmarshal([]byte(roomInfo.RuleJSON), roomRules)
+	res := &query.RoomQueryResponse{
+		RoomId:    roomInfo.ID,
+		RoomName:  roomInfo.RoomName,
+		RoomRules: roomRules,
+		OwnerWxId: roomInfo.OwnerWxID,
+		Number:    roomInfo.Number,
+	}
+	OKResponse(c, res)
+}
 func CreateRoom(c *gin.Context) {
-	var room query.RoomReq
+	var room query.CreateRoomReq
 	if err := c.ShouldBindJSON(&room); err != nil {
 		FailResponse(c, http.StatusBadRequest, "fail", gin.H{"error": err.Error()})
 		return
@@ -17,15 +40,11 @@ func CreateRoom(c *gin.Context) {
 		FailResponseRCode(c, common.RoomExistError)
 		return
 	}
-	if ok := srv.InitGameData(room.RoomName, 1); !ok {
-		FailResponseRCode(c, common.RoomInitError)
-		return
-	}
 	OKResponse(c, true)
 }
 
 func UpdateRoom(c *gin.Context) {
-	var room query.RoomReq
+	var room query.CreateRoomReq
 	if err := c.ShouldBindJSON(&room); err != nil {
 		FailResponse(c, http.StatusBadRequest, "fail", gin.H{"error": err.Error()})
 		return
@@ -43,22 +62,13 @@ func EnterRoom(c *gin.Context) {
 		return
 	}
 	room := srv.QueryRoom(req.RoomName)
-	if room.RoomOwner == req.RoomUser ||
-		room.RoomUser1 == req.RoomUser ||
-		room.RoomUser2 == req.RoomUser ||
-		room.RoomUser3 == req.RoomUser {
-		res, code := srv.LatestGameResult(room.ID, req.RoomUser)
-		if code != nil {
-			FailResponseRCode(c, code)
-			return
-		}
-		OKResponse(c, &query.EnterRoomResponse{
-			ID:       res.ID,
-			RoomId:   res.RoomID,
-			RoomUser: res.RoomUser,
-			Number:   res.Number,
-		})
+	if room == nil {
+		FailResponseRCode(c, common.RoomUserError)
 		return
 	}
-	FailResponseRCode(c, common.RoomUserError)
+	players := srv.QueryRoomUser(room.ID)
+	if len(players) < 4 {
+		srv.CreateRoomUser(room.ID, req.WxID, req.WxImage, req.WxName)
+	}
+	OKResponse(c, true)
 }

@@ -5,24 +5,22 @@ import (
 	"guangfeng/internal/common"
 	"guangfeng/internal/model"
 	"guangfeng/internal/pojo/query"
-	"strconv"
 	"time"
 )
 
+func (s *Service) QueryRoomById(roomId int64) *model.RoomTab {
+	return s.dao.QueryRoomById(roomId)
+}
 func (s *Service) QueryRoom(roomName string) *model.RoomTab {
 	return s.dao.QueryRoom(roomName)
 }
-func (s *Service) InsertOrUpdateRoom(req query.RoomReq) bool {
+func (s *Service) InsertOrUpdateRoom(req query.CreateRoomReq) bool {
 	rules, _ := json.Marshal(req.RoomRules)
 	room := &model.RoomTab{
 		ID:         req.RoomId,
 		RoomName:   req.RoomName,
-		Password:   req.Password,
 		RuleJSON:   string(rules),
-		RoomOwner:  "房主",
-		RoomUser1:  defaultName(req.RoomUser1, 4),
-		RoomUser2:  defaultName(req.RoomUser2, 5),
-		RoomUser3:  defaultName(req.RoomUser3, 6),
+		OwnerWxID:  req.OwnerWxId,
 		UpdateTime: time.Now().Unix(),
 		IsDelete:   common.Valid,
 	}
@@ -33,19 +31,16 @@ func (s *Service) InsertOrUpdateRoom(req query.RoomReq) bool {
 	}
 }
 
-func defaultName(name string, num int) string {
-	if name != "" {
-		return name
+func (s *Service) QueryRoomUser(roomId int64) []*model.RoomUserTab {
+	return s.dao.QueryRoomUsers(roomId)
+}
+func (s *Service) CreateRoomUser(roomId int64, wxId string, wxImage string, wxName string) bool {
+	roomUser := &model.RoomUserTab{
+		RoomID:       roomId,
+		WxID:         wxId,
+		WxImage:      wxImage,
+		RoomUserName: wxName,
+		Status:       1,
 	}
-	// 嘿嘿，这默认名nice吧
-	switch num {
-	case 1:
-		return "花开富贵"
-	case 2:
-		return "上善若水"
-	case 3:
-		return "美好明天"
-	default:
-		return "皮卡丘" + strconv.Itoa(num) + "号"
-	}
+	return s.dao.CreateRoomUser(roomUser)
 }
