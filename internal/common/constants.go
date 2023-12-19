@@ -15,7 +15,6 @@ const (
 	Fail = 2
 )
 const (
-	Draft   = 0 //初始化状态
 	Cal     = 1 //结算中
 	Confirm = 2 //已确认
 )

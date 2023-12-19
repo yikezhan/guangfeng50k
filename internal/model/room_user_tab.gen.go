@@ -8,15 +8,15 @@ const TableNameRoomUserTab = "room_user_tab"
 
 // RoomUserTab room_user_tab
 type RoomUserTab struct {
-	ID           int64  `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
-	RoomID       string `gorm:"column:room_id;not null;comment:room_id" json:"room_id"`                         // room_id
-	WxID         string `gorm:"column:wx_id;not null;comment:wx_id" json:"wx_id"`                               // wx_id
-	WxImage      string `gorm:"column:wx_image;not null;comment:wx_image" json:"wx_image"`                      // wx_image
-	RoomUserName string `gorm:"column:room_user_name;not null;comment:room_user_name" json:"room_user_name"`    // room_user_name
-	Status       int32  `gorm:"column:status;not null;comment:1player,2watcher" json:"status"`                  // 1player,2watcher
-	CreateTime   int64  `gorm:"column:create_time;not null;comment:create time" json:"create_time"`             // create time
-	UpdateTime   int64  `gorm:"column:update_time;not null;comment:update time" json:"update_time"`             // update time
-	IsDelete     int32  `gorm:"column:is_delete;not null;comment:0:valid,1:logically deleted" json:"is_delete"` // 0:valid,1:logically deleted
+	ID         int64  `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
+	RoomID     int64  `gorm:"column:room_id;not null;comment:room_id" json:"room_id"`                         // room_id
+	WxID       string `gorm:"column:wx_id;not null;comment:wx_id" json:"wx_id"`                               // wx_id
+	WxImage    string `gorm:"column:wx_image;not null;comment:wx_image" json:"wx_image"`                      // wx_image
+	WxUserName string `gorm:"column:wx_user_name;not null;comment:wx_user_name" json:"wx_user_name"`          // wx_user_name
+	Status     int32  `gorm:"column:status;not null;comment:1player,2watcher" json:"status"`                  // 1player,2watcher
+	CreateTime int64  `gorm:"column:create_time;not null;comment:create time" json:"create_time"`             // create time
+	UpdateTime int64  `gorm:"column:update_time;not null;comment:update time" json:"update_time"`             // update time
+	IsDelete   int32  `gorm:"column:is_delete;not null;comment:0:valid,1:logically deleted" json:"is_delete"` // 0:valid,1:logically deleted
 }
 
 // TableName RoomUserTab's table name

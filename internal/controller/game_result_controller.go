@@ -13,7 +13,7 @@ func NextGame(c *gin.Context) {
 		FailResponse(c, http.StatusBadRequest, "fail", gin.H{"error": err.Error()})
 		return
 	}
-	number, code := srv.NextGame(req.RoomID, req.WxId)
+	number, code := srv.NextGame(req.RoomID, req.WxId, req.Number)
 	if code != nil {
 		FailResponseRCode(c, code)
 		return

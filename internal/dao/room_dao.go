@@ -16,6 +16,16 @@ func (d *Dao) UpdateRoom(info *model.RoomTab) bool {
 	tx := d.db.Table(info.TableName()).Where("id", info.ID).Updates(info)
 	return tx != nil && tx.RowsAffected == 1
 }
+
+func (d *Dao) UpdateNumber(id int64, number int64) bool {
+	info := &model.RoomTab{
+		ID:         id,
+		Number:     number,
+		UpdateTime: time.Now().Unix(),
+	}
+	tx := d.db.Table(info.TableName()).Where("id", info.ID).Select("number", "update_time").Updates(info)
+	return tx != nil && tx.RowsAffected == 1
+}
 func (d *Dao) QueryRoom(roomName string) *model.RoomTab {
 	info := &model.RoomTab{RoomName: roomName}
 	var res *model.RoomTab

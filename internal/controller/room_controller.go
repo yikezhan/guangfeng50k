@@ -9,7 +9,7 @@ import (
 )
 
 func QueryRoom(c *gin.Context) {
-	var room query.CreateRoomReq
+	var room query.RoomQueryReq
 	if err := c.ShouldBindJSON(&room); err != nil {
 		FailResponse(c, http.StatusBadRequest, "fail", gin.H{"error": err.Error()})
 		return
@@ -19,12 +19,12 @@ func QueryRoom(c *gin.Context) {
 		FailResponseRCode(c, common.RoomUserError)
 		return
 	}
-	var roomRules query.RoomRule
-	json.Unmarshal([]byte(roomInfo.RuleJSON), roomRules)
+	var roomRule *query.RoomRule
+	json.Unmarshal([]byte(roomInfo.RuleJSON), &roomRule)
 	res := &query.RoomQueryResponse{
 		RoomId:    roomInfo.ID,
 		RoomName:  roomInfo.RoomName,
-		RoomRules: roomRules,
+		RoomRules: *roomRule,
 		OwnerWxId: roomInfo.OwnerWxID,
 		Number:    roomInfo.Number,
 	}
@@ -67,8 +67,19 @@ func EnterRoom(c *gin.Context) {
 		return
 	}
 	players := srv.QueryRoomUser(room.ID)
-	if len(players) < 4 {
-		srv.CreateRoomUser(room.ID, req.WxID, req.WxImage, req.WxName)
+	for _, v := range players {
+		if v.WxID == req.WxID {
+			OKResponse(c, true)
+			return
+		}
 	}
-	OKResponse(c, true)
+	if len(players) < 4 {
+		if srv.CreateRoomUser(room.ID, req.WxID, req.WxImage, req.WxName) {
+			OKResponse(c, true)
+			return
+		} else {
+			FailResponseRCode(c, common.SystemError)
+		}
+	}
+	FailResponseRCode(c, common.RoomFullError)
 }

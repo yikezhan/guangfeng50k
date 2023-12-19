@@ -36,11 +36,11 @@ func (s *Service) QueryRoomUser(roomId int64) []*model.RoomUserTab {
 }
 func (s *Service) CreateRoomUser(roomId int64, wxId string, wxImage string, wxName string) bool {
 	roomUser := &model.RoomUserTab{
-		RoomID:       roomId,
-		WxID:         wxId,
-		WxImage:      wxImage,
-		RoomUserName: wxName,
-		Status:       1,
+		RoomID:     roomId,
+		WxID:       wxId,
+		WxImage:    wxImage,
+		WxUserName: wxName,
+		Status:     1,
 	}
 	return s.dao.CreateRoomUser(roomUser)
 }

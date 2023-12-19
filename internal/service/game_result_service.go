@@ -8,12 +8,12 @@ import (
 	"time"
 )
 
-func (s *Service) QueryUserProfile(roomID int64, roomUser string) (int64, []*query.UserProfile) {
+func (s *Service) QueryUserProfile(roomID int64, wxID string) (int64, []*query.UserProfile) {
 	gameResults := s.dao.AllGameResult(roomID)
 	userProfiles := make([]*query.UserProfile, 0)
 	userMap := make(map[string]int64, 0)
 	for _, v := range gameResults {
-		userMap[v.RoomUserID] = userMap[v.RoomUserID] + v.Amount
+		userMap[v.WxID] = userMap[v.WxID] + v.Amount
 	}
 	for k, v := range userMap {
 		userProfiles = append(userProfiles, &query.UserProfile{
@@ -21,7 +21,7 @@ func (s *Service) QueryUserProfile(roomID int64, roomUser string) (int64, []*que
 			Amount:   v,
 		})
 	}
-	return userMap[roomUser], userProfiles
+	return userMap[wxID], userProfiles
 }
 func (s *Service) QueryGameResult(roomID int64, number int64) ([]query.UserGameResult, *common.RCode) {
 
@@ -39,41 +39,58 @@ func (s *Service) LatestGameResult(roomId int64, roomUser string) (*model.GameRe
 	}
 	return res[0], nil
 }
-func (s *Service) NextGame(roomId int64, wxId string) (int64, *common.RCode) {
+func (s *Service) NextGame(roomId int64, wxId string, number int64) (int64, *common.RCode) {
 	room := s.dao.QueryRoomById(roomId)
-	latestGame := s.dao.LatestGameResult(roomId, wxId)[0]
 	if room.OwnerWxID == wxId {
-		latestGameResult := s.dao.QueryGameResult(roomId, latestGame.Number)
+		latestGameResult := s.dao.QueryGameResult(roomId, number)
 		for _, v := range latestGameResult {
 			if v.Status != common.Confirm {
-				return latestGame.Number, common.GameConfirmError
+				return room.Number, common.GameConfirmError
 			}
 		}
-		return latestGame.Number + 1, nil
+		nextNumber := room.Number + 1
+		if ok := s.dao.UpdateNumber(room.ID, nextNumber); !ok {
+			return room.Number, common.SystemError
+		}
+		return nextNumber, nil
 	}
-	return latestGame.Number, nil
+	return room.Number, nil
 }
 func (s *Service) SubmitGameData(req query.SubmitGameResultReq) bool {
+	room := s.dao.QueryRoomById(req.RoomID)
+	roomUser := s.dao.QueryRoomUsers(req.RoomID)
+	exist := false
+	for _, v := range roomUser {
+		if v.WxID == req.WxId {
+			exist = true
+			break
+		}
+	}
+	if !exist {
+		return false
+	}
 	resultJson, _ := json.Marshal(req.GameResult)
 	gameResult := &model.GameResultTab{
-		ID:         req.ResultID,
+		RoomID:     req.RoomID,
+		WxID:       req.WxId,
+		Number:     room.Number,
 		ResultJSON: string(resultJson),
 		UpdateTime: time.Now().Unix(),
 		Status:     common.Cal,
 	}
 	result := s.dao.QueryGameResult(req.RoomID, req.Number)
 	for _, v := range result {
-		if v.RoomUserID == req.WxId {
+		if v.WxID == req.WxId {
 			gameResult.ID = v.ID
 			break
 		}
 	}
 	if gameResult.ID == 0 {
-		if !s.dao.UpdateGameResult(gameResult) {
+		if !s.dao.CreateGameResult(gameResult) {
 			return false
 		}
 	} else {
-		if !s.dao.CreateGameResult(gameResult) {
+		if !s.dao.UpdateGameResult(gameResult) {
 			return false
 		}
 	}
@@ -157,10 +174,10 @@ func validResult(res []model.GameResultTab) (bool, *common.RCode) {
 	var FullScoreCount int64
 	var SurroundScoreCount int64
 	var KingPunishment int64
+	if len(res) < 4 {
+		return false, common.PlayerNoAllSubmitError
+	}
 	for _, v := range res {
-		if v.Status == common.Draft {
-			return false, common.PlayerNoAllSubmitError
-		}
 		gameResult := &query.GameResult{}
 		if err := json.Unmarshal([]byte(v.ResultJSON), gameResult); err != nil {
 			return false, common.SystemError

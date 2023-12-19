@@ -31,7 +31,7 @@ type EnterRoomReq struct {
 	RoomName string `form:"room_name" json:"room_name" xml:"room_name"  binding:"required"`
 	WxID     string `form:"wx_id" json:"wx_id" xml:"wx_id"  binding:"required"`
 	WxName   string `form:"wx_name" json:"wx_name" xml:"wx_name"  binding:"required"`
-	WxImage  string `form:"wx_image" json:"wx_image" xml:"wx_image"  binding:"required"`
+	WxImage  string `form:"wx_image" json:"wx_image" xml:"wx_image"`
 }
 type EnterRoomResponse struct {
 	ID       int64  `form:"id" json:"id" xml:"id"  binding:"required"`

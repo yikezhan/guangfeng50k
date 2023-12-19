@@ -26,6 +26,11 @@ var RoomInitError = &RCode{
 	Msg:    "房间初始化失败",
 	Detail: nil,
 }
+var RoomFullError = &RCode{
+	Code:   1000003,
+	Msg:    "房间已满",
+	Detail: nil,
+}
 var PlayerNoAllSubmitError = &RCode{
 	Code:   2000001,
 	Msg:    "结算中，，，",

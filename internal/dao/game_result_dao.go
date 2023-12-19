@@ -17,11 +17,11 @@ func (d *Dao) AllGameResult(roomID int64) []*model.GameResultTab {
 }
 func (d *Dao) LatestGameResult(roomID int64, wxID string) []*model.GameResultTab {
 	query := &model.GameResultTab{
-		RoomID:     roomID,
-		RoomUserID: wxID,
+		RoomID: roomID,
+		WxID:   wxID,
 	}
 	var res []*model.GameResultTab
-	d.db.Table(query.TableName()).Where("room_id = ? and wx_id = ?", query.RoomID, query.RoomUserID).
+	d.db.Table(query.TableName()).Where("room_id = ? and wx_id = ?", query.RoomID, query.WxID).
 		Order("id desc").Limit(1).Scan(&res)
 	return res
 }
@@ -39,7 +39,7 @@ func (d *Dao) CreateGameResult(info *model.GameResultTab) bool {
 	info.CreateTime = time.Now().Unix()
 	info.UpdateTime = time.Now().Unix()
 	info.IsDelete = common.Valid
-	info.Status = common.Draft
+	info.Status = common.Cal
 	info.Amount = 0
 	tx := d.db.Table(info.TableName()).Create(&info)
 	return tx != nil && tx.RowsAffected == 1

@@ -16,7 +16,7 @@ func UserProfile(c *gin.Context) {
 		FailResponse(c, http.StatusBadRequest, "fail", gin.H{"error": err.Error()})
 		return
 	}
-	amount, userProfiles := srv.QueryUserProfile(req.RoomId, req.RoomUser)
+	amount, userProfiles := srv.QueryUserProfile(req.RoomId, req.WxID)
 	OKResponse(c, query.UserProfileResponse{
 		Amount:       amount,
 		UserProfiles: userProfiles,

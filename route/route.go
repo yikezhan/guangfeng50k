@@ -16,7 +16,7 @@ func Load(r *gin.Engine) *gin.Engine {
 		v1.POST("/create", controller.CreateRoom)
 		v1.POST("/update", controller.UpdateRoom)
 		v1.POST("/enter_room", controller.EnterRoom)
-		v1.POST("/room_info", controller.QueryRoom)
+		v1.POST("/query", controller.QueryRoom)
 	}
 	v2 := r.Group("/game")
 	{

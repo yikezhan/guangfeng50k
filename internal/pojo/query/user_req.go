@@ -1,8 +1,8 @@
 package query
 
 type UserProfileReq struct {
-	RoomId   int64  `form:"room_id" json:"room_id" xml:"room_id"  binding:"required"`
-	RoomUser string `form:"room_user" json:"room_user" xml:"room_user"  binding:"required"`
+	RoomId int64  `form:"room_id" json:"room_id" xml:"room_id"  binding:"required"`
+	WxID   string `form:"room_user" json:"wx_id" xml:"wx_id"  binding:"required"`
 }
 
 type UserProfileResponse struct {
