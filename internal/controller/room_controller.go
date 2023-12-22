@@ -66,16 +66,20 @@ func EnterRoom(c *gin.Context) {
 		FailResponseRCode(c, common.RoomUserError)
 		return
 	}
+	resp := &query.EnterRoomResponse{
+		RoomId: room.ID,
+		Number: room.Number,
+	}
 	players := srv.QueryRoomUser(room.ID)
 	for _, v := range players {
 		if v.WxID == req.WxID {
-			OKResponse(c, true)
+			OKResponse(c, resp)
 			return
 		}
 	}
 	if len(players) < 4 {
 		if srv.CreateRoomUser(room.ID, req.WxID, req.WxImage, req.WxName) {
-			OKResponse(c, true)
+			OKResponse(c, resp)
 			return
 		} else {
 			FailResponseRCode(c, common.SystemError)
