@@ -23,21 +23,22 @@ func (s *Service) QueryUserProfile(roomID int64, wxID string) (int64, []*query.U
 	}
 	return userMap[wxID], userProfiles
 }
-func (s *Service) QueryGameResult(roomID int64, number int64) ([]query.UserGameResult, *common.RCode) {
+func (s *Service) QueryGameResult(roomID int64, number int64) ([]*query.UserGameResult, *common.RCode) {
 
 	res := s.dao.QueryGameResult(roomID, number)
 	if ok, code := validResult(res); !ok {
 		return nil, code
 	}
-	return convertGameResultTabToUserGameResult(res), nil
+	return convertGameResultTabToUserGameResultList(res), nil
 }
 
-func (s *Service) LatestGameResult(roomId int64, roomUser string) (*model.GameResultTab, *common.RCode) {
-	res := s.dao.LatestGameResult(roomId, roomUser)
+func (s *Service) LatestGameResult(roomId int64, wxID string) (*query.UserGameResult, *common.RCode) {
+	res := s.dao.LatestGameResult(roomId, wxID)
 	if len(res) != 1 {
 		return nil, common.SystemError
 	}
-	return res[0], nil
+
+	return convertGameResultTabToUserGameResult(res[0]), nil
 }
 func (s *Service) NextGame(roomId int64, wxId string, number int64) (int64, *common.RCode) {
 	room := s.dao.QueryRoomById(roomId)
