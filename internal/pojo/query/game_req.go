@@ -47,8 +47,9 @@ type UserGameResult struct {
 	Number     int64      `form:"number" json:"number" xml:"number"  binding:"required"`
 	WxID       string     `form:"wx_id" json:"wx_id" xml:"wx_id"  binding:"required"`
 	GameResult GameResult `form:"game_result" json:"game_result" xml:"game_result"  binding:"required"`
+	Status     int32      `form:"status" json:"status" xml:"status"  binding:"required"` // 0 draft,1confirm
 	Amount     int64      `form:"amount" json:"amount" xml:"amount"`
 }
 type GetGameResultResponse struct {
-	GameResultList []UserGameResult `form:"game_result_list" json:"game_result_list" xml:"game_result_list"  binding:"required"`
+	GameResultList []*UserGameResult `form:"game_result_list" json:"game_result_list" xml:"game_result_list"  binding:"required"`
 }

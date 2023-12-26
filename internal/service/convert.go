@@ -25,6 +25,7 @@ func convertGameResultTabToUserGameResult(v *model.GameResultTab) *query.UserGam
 		Number:     v.Number,
 		WxID:       v.WxID,
 		GameResult: *gameResult,
+		Status:     v.Status,
 		Amount:     v.Amount,
 	}
 	return tmp

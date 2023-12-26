@@ -23,11 +23,13 @@ func (s *Service) QueryUserProfile(roomID int64, wxID string) (int64, []*query.U
 	}
 	return userMap[wxID], userProfiles
 }
-func (s *Service) QueryGameResult(roomID int64, number int64) ([]*query.UserGameResult, *common.RCode) {
+func (s *Service) QueryGameResult(roomID int64, number int64, valid bool) ([]*query.UserGameResult, *common.RCode) {
 
 	res := s.dao.QueryGameResult(roomID, number)
-	if ok, code := validResult(res); !ok {
-		return nil, code
+	if valid {
+		if ok, code := validResult(res); !ok {
+			return nil, code
+		}
 	}
 	return convertGameResultTabToUserGameResultList(res), nil
 }

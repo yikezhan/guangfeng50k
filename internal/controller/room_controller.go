@@ -73,12 +73,16 @@ func EnterRoom(c *gin.Context) {
 	players := srv.QueryRoomUser(room.ID)
 	for _, v := range players {
 		if v.WxID == req.WxID {
-			gameResult, code := srv.LatestGameResult(room.ID, req.WxID)
+			gameResult, code := srv.QueryGameResult(room.ID, room.Number, false)
 			if code != nil {
 				FailResponseRCode(c, code)
 				return
 			}
-			resp.UserGameResult = *gameResult
+			for _, v := range gameResult {
+				if v.WxID == req.WxID {
+					resp.UserGameResult = v
+				}
+			}
 			OKResponse(c, resp)
 			return
 		}

@@ -34,7 +34,7 @@ type EnterRoomReq struct {
 	WxImage  string `form:"wx_image" json:"wx_image" xml:"wx_image"`
 }
 type EnterRoomResponse struct {
-	RoomId         int64          `form:"room_id" json:"room_id" xml:"room_id"  binding:"required"`
-	Number         int64          `form:"number" json:"number" xml:"number"  binding:"required"`
-	UserGameResult UserGameResult `form:"user_game_result" json:"user_game_result" xml:"user_game_result"  binding:"required"`
+	RoomId         int64           `form:"room_id" json:"room_id" xml:"room_id"  binding:"required"`
+	Number         int64           `form:"number" json:"number" xml:"number"  binding:"required"`
+	UserGameResult *UserGameResult `form:"user_game_result" json:"user_game_result" xml:"user_game_result"  binding:"required"`
 }
