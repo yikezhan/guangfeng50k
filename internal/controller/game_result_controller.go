@@ -56,12 +56,13 @@ func GetGameResult(c *gin.Context) {
 	}
 
 	gameResults, code := srv.QueryGameResult(req.RoomID, req.Number, true)
-	if code != nil {
-		FailResponseRCode(c, code)
-		return
-	}
 	resp := &query.GetGameResultResponse{
 		GameResultList: gameResults,
+	}
+	if code != nil {
+		code.Detail = resp
+		FailResponseRCode(c, code)
+		return
 	}
 	OKResponse(c, resp)
 }
