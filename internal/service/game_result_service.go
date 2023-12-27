@@ -29,17 +29,10 @@ func (s *Service) QueryGameResult(roomID int64, number int64, valid bool) ([]*qu
 	if valid {
 		_, code = validResult(res)
 	}
-	return convertGameResultTabToUserGameResultList(res), code
+	roomUser := s.dao.QueryRoomUsers(roomID)
+	return convertGameResultTabToUserGameResultList(res, roomUser), code
 }
 
-func (s *Service) LatestGameResult(roomId int64, wxID string) (*query.UserGameResult, *common.RCode) {
-	res := s.dao.LatestGameResult(roomId, wxID)
-	if len(res) != 1 {
-		return nil, common.SystemError
-	}
-
-	return convertGameResultTabToUserGameResult(res[0]), nil
-}
 func (s *Service) NextGame(roomId int64, wxId string, number int64) (int64, *common.RCode) {
 	room := s.dao.QueryRoomById(roomId)
 	if room.OwnerWxID == wxId {

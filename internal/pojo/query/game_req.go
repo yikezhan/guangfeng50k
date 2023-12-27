@@ -46,6 +46,7 @@ type UserGameResult struct {
 	RoomID     int64      `form:"room_id" json:"room_id" xml:"room_id"  binding:"required"`
 	Number     int64      `form:"number" json:"number" xml:"number"  binding:"required"`
 	WxID       string     `form:"wx_id" json:"wx_id" xml:"wx_id"  binding:"required"`
+	WxName     string     `form:"wx_name" json:"wx_name" xml:"wx_name"  binding:"required"`
 	GameResult GameResult `form:"game_result" json:"game_result" xml:"game_result"  binding:"required"`
 	Status     int32      `form:"status" json:"status" xml:"status"  binding:"required"` // 0 draft,1confirm
 	Amount     int64      `form:"amount" json:"amount" xml:"amount"`
